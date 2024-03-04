@@ -2,17 +2,17 @@ import styled from "styled-components";
 import {
   Btn1,
   Buscador,
-  RegistrarMarca,
-  TablaMarca,
+  RegistrarProductos,
+  TablaProductos,
   Title,
-  useMarcaStore,
+  useProductosStore,
 } from "../../index";
 import { v } from "../../styles/variables";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConfettiExplosion from "react-confetti-explosion";
-export function MarcaTemplate() {
+export function ProductosTemplate() {
   const [openRegistro, SetopenRegistro] = useState(false);
-  const { datamarca,setBuscador } = useMarcaStore();
+  const { dataProductos,setBuscador,generarCodigo } = useProductosStore();
   const [accion, setAccion] = useState("");
   const [dataSelect, setdataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
@@ -21,18 +21,23 @@ export function MarcaTemplate() {
     setAccion("Nuevo");
     setdataSelect([]);
     setIsExploding(false)
+    generarCodigo();
+   
   }
+
   return (
     <Container>
-      {openRegistro && (
-        <RegistrarMarca setIsExploding={setIsExploding}
+   {
+    openRegistro &&  <RegistrarProductos setIsExploding={setIsExploding}
           onClose={() => SetopenRegistro(!openRegistro)}
           dataSelect={dataSelect}
-          accion={accion}
+          accion={accion} state={openRegistro}
         />
-      )}
+   }
+       
+     
       <section className="area1">
-        <Title>Marcas</Title>
+        <Title>Productos</Title>
         <Btn1
           funcion={nuevoRegistro}
           bgcolor={v.colorPrincipal}
@@ -46,13 +51,14 @@ export function MarcaTemplate() {
 
       <section className="main">
         {isExploding && <ConfettiExplosion />}
-        <TablaMarca setdataSelect={setdataSelect} setAccion={setAccion} SetopenRegistro={SetopenRegistro} data={datamarca} />
+        <TablaProductos setdataSelect={setdataSelect} setAccion={setAccion} SetopenRegistro={SetopenRegistro} data={dataProductos} />
       </section>
+    
     </Container>
   );
 }
 const Container = styled.div`
-  height: calc(100vh - 30px);
+ 
   padding: 15px;
   display: grid;
   grid-template:

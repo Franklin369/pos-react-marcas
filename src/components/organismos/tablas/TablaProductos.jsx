@@ -1,10 +1,9 @@
 import styled from "styled-components";
 import {
+  Checkbox1,
   ContentAccionesTabla,
   Paginacion,
-  ImagenContent,
-  Icono,
-  useMarcaStore,
+  useProductosStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
@@ -18,7 +17,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
-export function TablaMarca({
+export function TablaProductos({
   data,
   SetopenRegistro,
   setdataSelect,
@@ -29,7 +28,7 @@ export function TablaMarca({
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
 
-  const { eliminarMarca } = useMarcaStore();
+  const { eliminarProductos } = useProductosStore();
   function eliminar(p) {
     if (p.nombre === "General") {
       Swal.fire({
@@ -50,20 +49,12 @@ export function TablaMarca({
       confirmButtonText: "Si, eliminar",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await eliminarMarca({ id: p.id });
+        await eliminarProductos({ id: p.id });
       }
     });
   }
   function editar(data) {
-    if (data.nombre === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Este registro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
-      return;
-    }
+  
     SetopenRegistro(true);
     setdataSelect(data);
     setAccion("Editar");
@@ -73,8 +64,68 @@ export function TablaMarca({
       accessorKey: "nombre",
       header: "Descripcion",
       cell: (info) => (
-        <td data-title="Descripción" className="ContentCell">
+        <td data-title="DESCRIPCION" className="ContentCell">
           <span>{info.getValue()}</span>
+        </td>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "p_venta",
+      header: "P. venta",
+      cell: (info) => (
+        <td data-title="P. venta" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </td>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "p_compra",
+      header: "P. compra",
+      cell: (info) => (
+        <td data-title="P. compra" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </td>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "sevende_por",
+      header: "Se vende por",
+      cell: (info) => (
+        <td data-title="Se vende por" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </td>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "maneja_inventarios",
+      header: "Inventarios",
+      cell: (info) => (
+        <td data-title="Inventarios" className="ContentCell">
+          <Checkbox1 isChecked={info.getValue()}/>
         </td>
       ),
       enableColumnFilter: true,
@@ -90,12 +141,12 @@ export function TablaMarca({
       header: "",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Acciones" className="ContentCell">
+        <div data-title="Acciones" className="ContentCell">
           <ContentAccionesTabla
             funcionEditar={() => editar(info.row.original)}
             funcionEliminar={() => eliminar(info.row.original)}
           />
-        </td>
+        </div>
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
